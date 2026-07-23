@@ -24,7 +24,6 @@ import java.io.IOException
  */
 class HttpClickUpApi(
   private val tokenProvider: () -> String?,
-  private val baseUrl: String = DEFAULT_BASE_URL,
 ) : ClickUpApi {
 
   override fun getTeams(): List<Team> =
@@ -35,7 +34,7 @@ class HttpClickUpApi(
       ?: throw ClickUpApiException("No ClickUp API token configured.")
 
     val body = try {
-      HttpRequests.request(baseUrl + path)
+      HttpRequests.request(DEFAULT_BASE_URL + path)
         .tuner { it.setRequestProperty("Authorization", token) }
         .accept("application/json")
         .connectTimeout(CONNECT_TIMEOUT_MS)

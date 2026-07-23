@@ -20,7 +20,8 @@ import kotlinx.coroutines.withContext
 @Service(Service.Level.APP)
 class ClickUpService(val scope: CoroutineScope) {
 
-  private val tokenStorage: ClickUpTokenStorage get() = service()
+  private val tokenStorage: ClickUpTokenStorage
+    get() = service()
 
   private val api: ClickUpApi = HttpClickUpApi(tokenProvider = { tokenStorage.getToken() })
 
