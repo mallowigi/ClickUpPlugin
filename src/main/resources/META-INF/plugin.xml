@@ -25,5 +25,10 @@
             instance="com.mallowigi.clickup.settings.ClickUpSettingsConfigurable"
             key="settings.displayName"
             bundle="messages.ClickUpBundle"/>
+        <toolWindow
+            id="ClickUp"
+            anchor="right"
+            factoryClass="com.mallowigi.clickup.toolwindow.ClickUpToolWindowFactory"
+            icon="AllIcons.Toolwindows.ToolWindowHierarchy"/>
     </extensions>
 </idea-plugin>

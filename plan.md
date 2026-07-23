@@ -90,17 +90,26 @@ Two independent UI surfaces, each using the best-fit toolkit — no coupling bey
 - `toolwindow/ClickUpToolWindowContent.kt` — Jewel/Compose renderer (Refresh + Configure + tree).
 
 **Remaining to finish Step 6–8:**
-
 - A) **ToolWindowFactory** hosting the Jewel/Compose panel: create `JewelComposePanel`, wire
   `ClickUpToolWindowModel` → `ClickUpToolWindowContent`, provide `onRefresh`/`onConfigure`
-  (open Settings), trigger initial `refresh()`, dispose panel with tool window content, use a lifecycle CoroutineScope.
-  **This is the immediate next task.**
+  (open Settings), trigger initial `refresh()`, dispose panel with tool window content, use a platform-managed lifecycle
+  `CoroutineScope` bound to the content `Disposable`, and expose Refresh as a title action (review #3/#4). **This is the
+  immediate next task.**
 - B) **Register `<toolWindow>`** in `plugin.xml` (id, anchor, factoryClass, icon).
-- C) **Message bundle keys** — add the `toolwindow.*` keys referenced by the Compose UI:
-  `refresh, loading, empty, error, error.generic, notConfigured, configure` + tool window title.
+- C) **Message bundle keys** — DONE (toolwindow.* keys added).
 - D) **Remove placeholder** shuffle/MyToolWindow code — appears already gone; verify none remains.
 - E) **Tests** for `ClickUpTreeCoordinator` tree assembly against fakes.
 - F) **Build + `runIde`** smoke test (offline/error state expected; happy path needs unfirewalled machine).
+
+**Self-review fixes applied (this pass):**
+
+- #1 `ClickUpToolWindowModel.refresh()` now catches all exceptions (rethrowing `CancellationException`)
+  so unexpected failures surface as `Error` instead of hanging on `Loading`.
+- #2 `ClickUpTreeCoordinator` fan-out now bounded by a `Semaphore(8)` request gate to respect rate limits.
+- #5 `ClickUpUiState.Error.message` annotated `@Nls`.
+- #6 `SpaceRow` indentation via `Modifier.padding(start=…)` instead of literal spaces.
+- #8 coordinator imports cleaned / `awaitAll` (already present).
+- Deferred: #3/#4 (factory scope + title action), #7 layering, #9 dead-code review → tracked in SQL.
 
 ## Todos
 
