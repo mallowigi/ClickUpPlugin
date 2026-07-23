@@ -7,7 +7,7 @@ import com.mallowigi.clickup.api.model.ListsResponse
 
 /** Talks to the ClickUp list endpoints (folder-based and folderless). */
 @Service(Service.Level.APP)
-class ListsService : ClickUpApiService() {
+open class ListsService : ClickUpApiService() {
 
   /** GET /space/{spaceId}/list — the folderless lists directly under a space. */
   suspend fun getFolderlessLists(spaceId: String): List<ClickUpList> =

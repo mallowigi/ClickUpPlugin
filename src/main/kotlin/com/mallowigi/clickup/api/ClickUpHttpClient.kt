@@ -3,7 +3,6 @@ package com.mallowigi.clickup.api
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.util.io.HttpRequests
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.json.Json
 import java.io.IOException
 
 /**
@@ -43,7 +42,7 @@ object ClickUpHttpClient : ClickUpHttpTransport {
     }
 
     return try {
-      JSON.decodeFromString(deserializer, body)
+      ClickUpJson.decodeFromString(deserializer, body)
     } catch (e: Exception) {
       thisLogger().warn("Failed to parse ClickUp response from $path", e)
       throw ClickUpApiException("Failed to parse ClickUp response from $path: ${e.message}", cause = e)
@@ -54,9 +53,4 @@ object ClickUpHttpClient : ClickUpHttpTransport {
 
   private const val CONNECT_TIMEOUT_MS = 15_000
   private const val READ_TIMEOUT_MS = 30_000
-
-  private val JSON = Json {
-    ignoreUnknownKeys = true
-    coerceInputValues = true
-  }
 }

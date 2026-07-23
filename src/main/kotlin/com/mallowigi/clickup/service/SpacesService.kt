@@ -7,7 +7,7 @@ import com.mallowigi.clickup.api.model.SpacesResponse
 
 /** Talks to the ClickUp space endpoints. */
 @Service(Service.Level.APP)
-class SpacesService : ClickUpApiService() {
+open class SpacesService : ClickUpApiService() {
 
   /** GET /team/{teamId}/space — the spaces within a team. */
   suspend fun getSpaces(teamId: String): List<Space> =
