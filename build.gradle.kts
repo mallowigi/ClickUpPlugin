@@ -9,13 +9,18 @@ plugins {
   id("org.jetbrains.intellij.platform")
 }
 
+// Read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
+kotlin {
+  jvmToolchain(25)
+}
+
 dependencies {
   implementation(libs.kotlinx.serialization.json)
 
   testImplementation(libs.junit)
 
   intellijPlatform {
-    intellijIdea("2025.3.5")
+    intellijIdea("2026.2")
     testFramework(TestFrameworkType.Platform)
 
     // Add plugin dependencies for compilation here:
