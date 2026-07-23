@@ -8,6 +8,9 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
+data class UserResponse(val user: User)
+
+@Serializable
 data class TeamsResponse(val teams: List<Team> = emptyList())
 
 @Serializable
