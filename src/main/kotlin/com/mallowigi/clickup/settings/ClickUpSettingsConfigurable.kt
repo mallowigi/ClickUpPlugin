@@ -68,12 +68,15 @@ class ClickUpSettingsConfigurable : Configurable {
       showStatus(AllIcons.General.Warning, ClickUpBundle.message("settings.test.empty"))
       return
     }
+
     button.isEnabled = false
     showStatus(null, ClickUpBundle.message("settings.test.testing"))
+
     val modality = ModalityState.stateForComponent(field)
     connectionJob = service<ClickUpAuthService>().testConnectionAsync(token, modality) { result ->
       val activeButton = testButton ?: return@testConnectionAsync
       activeButton.isEnabled = true
+
       when (result) {
         is TestConnectionResult.Success ->
           showStatus(AllIcons.General.InspectionsOK, ClickUpBundle.message("settings.test.success", result.userName))
@@ -106,6 +109,7 @@ class ClickUpSettingsConfigurable : Configurable {
   override fun reset() {
     val field = tokenField ?: return
     showStatus(null, "")
+
     val modality = ModalityState.stateForComponent(field)
     ApplicationManager.getApplication().executeOnPooledThread {
       val token = service<ClickUpTokenStorage>().getToken().orEmpty()

@@ -71,6 +71,37 @@ Two independent UI surfaces, each using the best-fit toolkit — no coupling bey
 - Dispose the Compose panel with the tool window content; keep API/data work off the Compose UI thread.
 - Keep the API client + domain model UI-agnostic so the UI stays a thin Compose layer.
 
+## Progress — where we left off (session resume)
+
+**Done & committed** (HEAD `9656a03`):
+
+- Steps 1–5 complete. Build config (Jewel/Compose bundled modules, kotlinx.serialization), API data models
+  (Team/Space/Folder/ClickUpList/User/Responses), HTTP transport + client + JSON,
+  `ClickUpTokenStorage` (PasswordSafe), per-domain services (Teams/Spaces/Folders/Lists),
+  `ClickUpAuthService`, `ClickUpSettingsConfigurable` (Kotlin UI DSL v2, async token validation), and unit tests
+  (`ClickUpJsonTest`, `ClickUpServicesTest`, `FakeClickUpHttpTransport`).
+
+**Done but NOT yet committed** (untracked working tree):
+
+- `api/model/SpaceTree.kt` — presentation tree (SpaceTree/SpaceNode/FolderNode).
+- `service/ClickUpTreeCoordinator.kt` — assembles the Space→[Folder→]List tree (concurrent per-space).
+- `toolwindow/ClickUpUiState.kt` — sealed UI state (NotConfigured/Loading/Empty/Content/Error).
+- `toolwindow/ClickUpToolWindowModel.kt` — toolkit-agnostic StateFlow model with refresh + Job cancel.
+- `toolwindow/ClickUpToolWindowContent.kt` — Jewel/Compose renderer (Refresh + Configure + tree).
+
+**Remaining to finish Step 6–8:**
+
+- A) **ToolWindowFactory** hosting the Jewel/Compose panel: create `JewelComposePanel`, wire
+  `ClickUpToolWindowModel` → `ClickUpToolWindowContent`, provide `onRefresh`/`onConfigure`
+  (open Settings), trigger initial `refresh()`, dispose panel with tool window content, use a lifecycle CoroutineScope.
+  **This is the immediate next task.**
+- B) **Register `<toolWindow>`** in `plugin.xml` (id, anchor, factoryClass, icon).
+- C) **Message bundle keys** — add the `toolwindow.*` keys referenced by the Compose UI:
+  `refresh, loading, empty, error, error.generic, notConfigured, configure` + tool window title.
+- D) **Remove placeholder** shuffle/MyToolWindow code — appears already gone; verify none remains.
+- E) **Tests** for `ClickUpTreeCoordinator` tree assembly against fakes.
+- F) **Build + `runIde`** smoke test (offline/error state expected; happy path needs unfirewalled machine).
+
 ## Todos
 
 Tracked in SQL (`todos` table). High level:
