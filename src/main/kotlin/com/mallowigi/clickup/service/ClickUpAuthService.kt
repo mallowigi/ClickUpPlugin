@@ -1,14 +1,13 @@
 package com.mallowigi.clickup.service
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.mallowigi.clickup.ClickUpBundle
 import com.mallowigi.clickup.api.ClickUpApiException
 import com.mallowigi.clickup.api.model.UserResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 /**
  * Validates ClickUp API tokens by calling `GET /user`, the cheapest authenticated endpoint.
@@ -30,13 +29,17 @@ class ClickUpAuthService(private val scope: CoroutineScope) : ClickUpApiService(
 
   /**
    * Convenience for Swing callers (e.g. the Settings page): runs [testConnection] on the
-   * service scope and delivers [onResult] back on the EDT.
+   * service scope and delivers [onResult] back on the EDT under the supplied [modality] (so a
+   * stale result cannot fire against a disposed dialog). Returns the [Job] so the caller can
+   * cancel it when its UI is disposed.
    */
-  fun testConnectionAsync(token: String, onResult: (TestConnectionResult) -> Unit) {
-    scope.launch {
-      val result = testConnection(token)
-      ApplicationManager.getApplication().invokeLater({ onResult(result) }, ModalityState.any())
-    }
+  fun testConnectionAsync(
+    token: String,
+    modality: ModalityState,
+    onResult: (TestConnectionResult) -> Unit,
+  ): Job = scope.launch {
+    val result = testConnection(token)
+    withContext(Dispatchers.EDT) { onResult(result) }
   }
 
   private fun userMessageFor(e: ClickUpApiException): String = when (e.statusCode) {
