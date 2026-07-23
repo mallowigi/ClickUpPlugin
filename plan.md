@@ -101,8 +101,7 @@ Two independent UI surfaces, each using the best-fit toolkit — no coupling bey
 - E) **Tests** for `ClickUpTreeCoordinator` tree assembly against fakes.
 - F) **Build + `runIde`** smoke test (offline/error state expected; happy path needs unfirewalled machine).
 
-**Self-review fixes applied (this pass):**
-
+**Self-review fixes applied:**
 - #1 `ClickUpToolWindowModel.refresh()` now catches all exceptions (rethrowing `CancellationException`)
   so unexpected failures surface as `Error` instead of hanging on `Loading`.
 - #2 `ClickUpTreeCoordinator` fan-out now bounded by a `Semaphore(8)` request gate to respect rate limits.
@@ -110,6 +109,17 @@ Two independent UI surfaces, each using the best-fit toolkit — no coupling bey
 - #6 `SpaceRow` indentation via `Modifier.padding(start=…)` instead of literal spaces.
 - #8 coordinator imports cleaned / `awaitAll` (already present).
 - Deferred: #3/#4 (factory scope + title action), #7 layering, #9 dead-code review → tracked in SQL.
+
+**Debugging fixes (build):**
+
+- Light services must be `final`. Reverted the constructor-injection experiment: `TeamsService`,
+  `SpacesService`, `FoldersService`, `ListsService`, `ClickUpApiService`, and `ClickUpAuthService`
+  are plain final light services again (base resolves transport/token directly). Per user, the test seam was dropped:
+  `ClickUpServicesTest` + `FakeClickUpHttpTransport` removed. `ClickUpJsonTest`
+  remains as the offline validation.
+- `instrumentCode = false` in `build.gradle.kts` — the platform bytecode instrumenter can't read Java 25 class files
+  (fails with cryptic `1 >= 1`); we don't use form/@NotNull instrumentation.
+- `./gradlew clean test` now BUILD SUCCESSFUL.
 
 ## Todos
 

@@ -14,6 +14,12 @@ kotlin {
   jvmToolchain(25)
 }
 
+intellijPlatform {
+  // The platform's bytecode instrumenter can't yet read Java 25 class files (fails with a
+  // cryptic "1 >= 1"). We don't rely on form/@NotNull instrumentation, so disable it.
+  instrumentCode = false
+}
+
 dependencies {
   implementation(libs.kotlinx.serialization.json)
 

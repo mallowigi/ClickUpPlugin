@@ -7,7 +7,7 @@ import com.mallowigi.clickup.api.model.FoldersResponse
 
 /** Talks to the ClickUp folder endpoints. */
 @Service(Service.Level.APP)
-open class FoldersService : ClickUpApiService() {
+class FoldersService : ClickUpApiService() {
 
   /** GET /space/{spaceId}/folder — the folders within a space. */
   suspend fun getFolders(spaceId: String): List<Folder> =
