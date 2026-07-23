@@ -27,6 +27,9 @@ class ClickUpTokenStorage {
   fun hasToken(): Boolean = !getToken().isNullOrBlank()
 
   companion object {
+    val instance: ClickUpTokenStorage
+      get() = com.intellij.openapi.components.service()
+
     private const val SUBSYSTEM = "ClickUp"
     private const val KEY = "apiToken"
   }

@@ -22,7 +22,11 @@ abstract class ClickUpApiService {
   /** Supplies the current API token; `open` so tests can bypass the credential store. */
   protected open val tokenProvider: () -> String? = { service<ClickUpTokenStorage>().getToken() }
 
-  /** Suspending GET that runs the blocking transport call off the EDT. */
+  /** Suspending GET (using the stored token) that runs the blocking call off the EDT. */
   protected suspend fun <T> get(path: String, deserializer: DeserializationStrategy<T>): T =
-    withContext(Dispatchers.IO) { http.get(path, tokenProvider(), deserializer) }
+    get(path, tokenProvider(), deserializer)
+
+  /** Suspending GET with an explicit [token] — used to validate a not-yet-saved token. */
+  protected suspend fun <T> get(path: String, token: String?, deserializer: DeserializationStrategy<T>): T =
+    withContext(Dispatchers.IO) { http.get(path, token, deserializer) }
 }
